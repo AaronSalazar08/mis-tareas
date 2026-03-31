@@ -69,7 +69,7 @@ npm install
 #### 3.3 Crear base de datos Firestore
 
 1. Panel lateral → **Firestore Database** → **Crear base de datos**
-2. Selecciona modo **Producción**
+2. Selecciona modo **Producción** (Si solo estas en entorno de prueba selecciona modo Prueba--Testing)
 3. Elige una región (recomendado: `us-east1`) → Listo
 
 #### 3.4 Configurar reglas de seguridad en Firestore
