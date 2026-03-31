@@ -90,7 +90,7 @@ service cloud.firestore {
 }
 ```
 
-Haz clic en **Publicar**.
+Haz clic en **Publicar**. Las reglas de Firebase son utilices para definir barreras del lado del servidor que sirven como capa de seguridad. Enntonces solo permetirá gestionar las taraes si el usaurio esta autenticado.
 
 #### 3.5 Obtener credenciales de la app
 
@@ -283,19 +283,6 @@ npm run lint      # Linting con ESLint
 
 ---
 
-## Preguntas frecuentes
-
-**¿Por qué mis tareas no aparecen después de recargar?**
-Verifica que las variables de entorno en `.env` sean correctas y que las reglas de Firestore estén publicadas.
-
-**¿Cómo agrego un nuevo miembro al equipo?**
-Solo necesita clonar el repositorio y crear su propio `.env` con las credenciales del proyecto Firebase compartido. Cada usuario gestiona sus propias tareas de forma aislada.
-
-**¿Puedo usar el mismo proyecto Firebase para desarrollo y producción?**
-No se recomienda. Lo ideal es tener un proyecto Firebase separado para cada entorno.
-
----
-
 ## Contribuir al proyecto
 
 1. Haz fork del repositorio
@@ -312,16 +299,15 @@ No se recomienda. Lo ideal es tener un proyecto Firebase separado para cada ento
 
 Si Firebase no está disponible, la app muestra mensajes de error en la UI gracias al manejo de errores en los thunks de Redux (`rejectWithValue`). Las tareas que ya estaban cargadas en el store de Redux permanecen visibles mientras dure la sesión, funcionando como caché local temporal. Para mayor resiliencia en producción, se podría implementar persistencia local con `redux-persist` + `localStorage`, junto con un sistema de cola de operaciones pendientes que se sincronice cuando Firebase recupere la disponibilidad.
 
-### ¿Qué mejoras priorizaría en los próximos 3 meses para una empresa real?
+### Si esta aplicación fuera utilizada por una empresa real con cientos de usuarios, ¿qué mejoras priorizaría en los próximos 3 meses?
 
 1. **Persistencia offline** con `redux-persist` para que los usuarios puedan trabajar sin conexión
-2. **Testing** con Vitest + React Testing Library para cubrir los flujos críticos de autenticación y CRUD
-3. **Paginación o carga infinita** en Firestore para escalar con grandes volúmenes de tareas
-4. **Notificaciones en tiempo real** usando `onSnapshot` de Firestore en lugar de fetch puntual
-5. **Roles y permisos** para habilitar equipos colaborativos con tareas compartidas
-6. **CI/CD automatizado** con GitHub Actions para despliegue automático a producción
+1. **Paginación o carga infinita** en Firestore para escalar con grandes volúmenes de tareas
+1. **Notificaciones en tiempo real** usando `onSnapshot` de Firestore en lugar de fetch puntual
+1. **Roles y permisos** para habilitar equipos colaborativos con tareas compartidas
+1. **CI/CD automatizado** con GitHub Actions para despliegue automático a producción
 
-### ¿Cómo diseñaría la arquitectura si dejara de usarse Firebase?
+### Si la aplicación creciera y dejara de usar Firebase, ¿cómo diseñaría la arquitectura para conectar con un backend mediante APIs?
 
 Se mantendría exactamente la misma estructura de Redux (slices, thunks, store). La única capa que cambiaría sería la de servicios: los thunks que hoy llaman a la SDK de Firebase pasarían a llamar a funciones de un módulo de servicios (`src/services/tasksService.js`, `src/services/authService.js`) que internamente usen `axios` o `fetch` para comunicarse con un backend REST o GraphQL. Redux actúa como una capa de abstracción que desacopla la UI de la fuente de datos, lo que hace que este reemplazo sea quirúrgico y no afecte a ningún componente visual.
 
@@ -333,14 +319,13 @@ En tres capas de seguridad complementarias:
 2. **Query filtrada (cliente):** Al consultar las tareas, siempre se usa `where('userId', '==', uid)`, por lo que Firestore nunca retorna tareas de otros usuarios.
 3. **Rutas protegidas (UI):** `ProtectedRoute` garantiza que ningún usuario no autenticado pueda acceder a la pantalla de tareas.
 
-### ¿Qué documentación o estructura dejaría para facilitar el mantenimiento?
+### Si otro desarrollador entra al proyecto, ¿qué documentación o estructura dejaría para facilitar el mantenimiento?
 
 - **Este README** con instrucciones de instalación, arquitectura y decisiones técnicas
 - **Comentarios en código** en los archivos más complejos (slices, hooks, rutas protegidas)
 - **Archivo `.env.example`** con las variables requeridas sin valores reales
 - **Estructura de carpetas por dominio** (`features/auth`, `features/tasks`) en lugar de por tipo de archivo, para que sea intuitivo encontrar todo lo relacionado con una funcionalidad
 - **Convención de commits** semánticos (`feat:`, `fix:`, `refactor:`) para un historial de Git legible
-- **Diagramas de flujo** del sistema de autenticación y del ciclo de vida de una tarea en la wiki del repositorio
 
 ---
 
